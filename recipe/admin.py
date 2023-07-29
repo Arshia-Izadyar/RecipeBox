@@ -10,7 +10,7 @@ class CategoryAdmin(admin.ModelAdmin):
     
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("title", "user", "created_time")
+    list_display = ("id", "title", "user", "created_time")
     search_fields = ("title", "user")
     order_by = ("-created_time")
     

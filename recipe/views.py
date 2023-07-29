@@ -1,13 +1,16 @@
-from django.http import Http404, HttpResponseRedirect
+
+from typing import Any
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import DetailView, FormView
+from django.views.generic import DetailView, FormView, UpdateView, DeleteView
 from django.db.models import Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
 from .models import Recipe
+from .permissions import IsAuthorOrReadOnlyPermission
 from .forms import RecipeForm
 
 class RecipeListView(View):
@@ -61,3 +64,40 @@ class RecipeCreateView(View):
             obj.save()
             return HttpResponseRedirect("/")
         raise Http404
+    
+class RecipeUpdateView(UpdateView):
+    template_name = "recipes/recipe_update.html"
+    form_class = RecipeForm
+    context_object_name = "recipe"
+    success_url = "/"
+    
+    def get_queryset(self):
+        return Recipe.objects.filter(pk=self.kwargs['pk'])
+    
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if request.user == obj.user:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise Http404
+    
+    
+class RecipeDeleteView(DeleteView):
+    template_name = "recipes/recipe_confirm_delete.html"
+    model = Recipe
+    success_url = "/"
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.obj = self.get_object()
+        if request.user == self.obj.user: # if user in owner
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise Http404
+        
+    def get_queryset(self):
+        return Recipe.objects.filter(pk=self.kwargs['pk'])
+    
+    def delete(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            self.obj.delete()
+            return HttpResponseRedirect(self.success_url)

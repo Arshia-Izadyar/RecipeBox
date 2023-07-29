@@ -1,0 +1,16 @@
+{% extends 'Base.html' %}
+{% block title %}
+Recipe Update
+{% endblock title %}
+
+{% block content %}
+{{recipe}}
+<form method="post" >
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Update" >
+</form>
+
+
+
+{% endblock content %}

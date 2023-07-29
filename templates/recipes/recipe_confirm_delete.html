@@ -1,0 +1,14 @@
+{% extends 'Base.html' %}
+{% block title %}
+Recipe deleted 
+{% endblock title %}
+
+{% block content %}
+<h1>deleted the recipe</h1>
+<form method="post">
+    {% csrf_token %}
+
+    <input type="submit" value="delete">
+</form>
+<a href="{% url 'recipe:list' %}">Return to home</a>
+{% endblock content %}

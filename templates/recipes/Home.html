@@ -9,14 +9,14 @@ Home feed
 
 <ul>
     {% for recipe in recipes %}
-        <li>{{recipe.title}} by user {{recipe.user}} likes: {{recipe.like_count}} </li>
-        {% if recipe.image %}
+    <li><a href="{% url 'recipe:detail' recipe.pk %}" >{{recipe.title}}</a> by user {{recipe.user}} likes: {{recipe.like_count}} </li>
+    {% if recipe.image %}
         <img src="{{recipe.image.url}}" alt="{{recipe.title}}" width="200" height="150">
         {% endif %}
     {% endfor %}
 </ul>
 
 {% else %}
-<h1> owwww Home feed empty</h1>
+<h1> owwww Home feed empty :( </h1>
 {% endif %}
 {% endblock content %}

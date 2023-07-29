@@ -20,7 +20,7 @@ class Category(models.Model):
 class Recipe(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, verbose_name=_("Created time"))
     modified_time = models.DateTimeField(verbose_name=_("Modified time"), auto_now=True)
-    title = models.CharField(max_length=150, verbose_name=_("Title"))
+    title = models.CharField(max_length=150, verbose_name=_("Title"), unique=True)
     description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
     instructions = models.TextField(verbose_name=_("Instructions"))
     time_to_cook = models.DurationField(verbose_name=_("time to cook"))

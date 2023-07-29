@@ -6,17 +6,17 @@ User profile
 {% block content %}
 
 <h1>{{ user.username }}'s Profile</h1>
-<h3> <a href="{% url 'accounts:followers_list' user.username %}">follwer</a> {{user.followers.count}}  || {{following.count}} <a href="{% url 'accounts:following_list' user.username %}">following </a> </h3>
+<h3> <a href="{% url 'followers_list' user.username %}">follwer</a> {{user.followers.count}}  || {{following.count}} <a href="{% url 'following_list' user.username %}">following </a> </h3>
 <h4>member since: {{ user.date_joined.date}}</h4>
 
 {% if user != request.user %}
     {% if user_is_following %}
-        <form method="post" action="{% url 'accounts:unfollow_user' user.username %}">
+        <form method="post" action="{% url 'unfollow_user' user.username %}">
             {% csrf_token %}
             <input type="submit" value="unfollow">
         </form>
     {% else %}
-        <form method="post" action="{% url 'accounts:follow_user' user.username %}">
+        <form method="post" action="{% url 'follow_user' user.username %}">
             {% csrf_token %}
             <input type="submit" value="follow">
         </form>

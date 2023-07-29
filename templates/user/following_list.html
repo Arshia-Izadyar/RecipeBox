@@ -5,6 +5,6 @@ Following
 
 {% block content %}
 {% for user in following %}
-    <a href="{% url 'accounts:profile' user.username %}">{{ user.username }}</a>
+    <a href="{% url 'profile' user.username %}">{{ user.username }}</a>
 {% endfor %}
 {% endblock content %}

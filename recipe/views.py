@@ -1,5 +1,6 @@
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView, UpdateView, DeleteView, ListView
 from django.db.models import Count, Q
@@ -30,7 +31,7 @@ class RecipeListView(View):
         return render(request, self.template_name, context)
 """  
 
-class RecipeListView(LoginRequiredMixin, FilterView):
+class RecipeListView(FilterView):
     filterset_class = HomeFilter
     paginate_by = 10
     template_name = "recipes/recipe_list.html"
@@ -145,9 +146,12 @@ class RecipeCategoryList(ListView):
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
-        user = request.user
-        following = user.following.all()
-        two_weeks = timezone.now() - timedelta(weeks=2)
-        recipe = Recipe.objects.annotate(like_count=Count("likes")).prefetch_related("likes").filter(Q(user__in=following)&Q(created_time__gte=two_weeks))
-        context = {"recipes": recipe}
-        return render(request, "recipes/Home.html", context)
+        if request.user.is_authenticated:
+            user = request.user
+            following = user.following.all()
+            two_weeks = timezone.now() - timedelta(weeks=2)
+            recipe = Recipe.objects.annotate(like_count=Count("likes")).prefetch_related("likes").filter(Q(user__in=following)&Q(created_time__gte=two_weeks))
+            context = {"recipes": recipe}
+            return render(request, "recipes/Home.html", context)
+        else:
+            return HttpResponseRedirect(reverse_lazy("recipe:list"))

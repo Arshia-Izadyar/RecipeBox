@@ -34,14 +34,14 @@ class FollowUserView(LoginRequiredMixin, View):
         user_name = kwargs.get('user_name')
         user_to_follow = get_object_or_404(User, username=user_name)
         request.user.following.add(user_to_follow)
-        return redirect('accounts:profile', user_name=user_name)
+        return redirect('profile', user_name=user_name)
     
 class UnfollowUserView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user_name = kwargs.get('user_name')
         user_to_unfollow = get_object_or_404(User, username=user_name)
         request.user.following.remove(user_to_unfollow)
-        return redirect('accounts:profile', user_name=user_name)
+        return redirect('profile', user_name=user_name)
 
 class FollowerListView(LoginRequiredMixin, ListView):
     context_object_name = 'followers'

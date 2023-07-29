@@ -16,14 +16,14 @@
             <li class="nav-item"><a href="{% url 'recipe:home' %}">Home</a></li>
 
             {% if user.is_authenticated %}
-                <li class="nav-item"><a href="{% url 'accounts:profile' user.username %}">profile</a></li>
+                <li class="nav-item"><a href="{% url 'profile' user.username %}">profile</a></li>
 
-                <li class="nav-item"><a href="#">Logout</a></li>
+                <li class="nav-item"><a href="{% url 'account_logout' %}">Logout</a></li>
 
 
             {% else %}
-                <li class="nav-item"><a href="#">Login</a></li>
-                <li class="nav-item"><a href="#">Sign Up</a></li>
+                <li class="nav-item"><a href="{% url 'account_login' %}">Login</a></li>
+                <li class="nav-item"><a href="{% url 'account_signup' %}">Sign Up</a></li>
             {% endif %}
                 <li class="nav-item"><a href="{% url 'recipe:list' %}">Lstest Posts</a></li>
 

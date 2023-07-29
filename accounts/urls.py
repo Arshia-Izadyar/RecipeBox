@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from .views import(
     UserProfile,
@@ -8,7 +8,6 @@ from .views import(
     FollowingListView,
     )
 
-app_name = "accounts"
 
 urlpatterns = [
     path("profile/<slug:user_name>/", UserProfile.as_view(), name="profile"),
@@ -16,5 +15,6 @@ urlpatterns = [
     path('unfollow/<slug:user_name>/', UnfollowUserView.as_view(), name='unfollow_user'),
     path('followers/<slug:user_name>/', FollowerListView.as_view(), name='followers_list'),
     path('following/<slug:user_name>/', FollowingListView.as_view(), name='following_list'),
+    path('', include('allauth.urls')),
 
 ]

@@ -1,0 +1,22 @@
+{% extends 'Base.html' %}
+
+{% block title %}
+Home feed 
+{% endblock title %}
+
+{% block content %}
+{% if recipes %}
+
+<ul>
+    {% for recipe in recipes %}
+        <li>{{recipe.title}} by user {{recipe.user}} likes: {{recipe.like_count}} </li>
+        {% if recipe.image %}
+        <img src="{{recipe.image.url}}" alt="{{recipe.title}}" width="200" height="150">
+        {% endif %}
+    {% endfor %}
+</ul>
+
+{% else %}
+<h1> owwww Home feed empty</h1>
+{% endif %}
+{% endblock content %}

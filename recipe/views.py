@@ -2,12 +2,15 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import DetailView, UpdateView, DeleteView, ListView
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_filters import FilterSet
 from django_filters.views import FilterView
+
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import Recipe, Category
 from .forms import RecipeForm
@@ -139,3 +142,12 @@ class RecipeCategoryList(ListView):
         print(category)
         return Recipe.objects.filter(category__name=category)
     
+
+class HomeView(View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        following = user.following.all()
+        two_weeks = timezone.now() - timedelta(weeks=2)
+        recipe = Recipe.objects.annotate(like_count=Count("likes")).prefetch_related("likes").filter(Q(user__in=following)&Q(created_time__gte=two_weeks))
+        context = {"recipes": recipe}
+        return render(request, "recipes/Home.html", context)

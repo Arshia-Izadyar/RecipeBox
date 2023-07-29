@@ -7,12 +7,14 @@ from .views import (
     RecipeUpdateView,
     RecipeDeleteView,
     RecipeCategoryList,
+    HomeView
     )
 
 app_name = "recipe"
 
 urlpatterns = [
-    path('', RecipeListView.as_view(), name='list'),
+    path('', HomeView.as_view(), name='home'),
+    path('list/', RecipeListView.as_view(), name='list'),
     path('<int:pk>/detail/', RecipeDetailView.as_view(), name='detail'),
     path("create/", RecipeCreateView.as_view(), name='create'),
     path("category/<slug:cat>/", RecipeCategoryList.as_view(), name='category'),

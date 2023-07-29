@@ -68,6 +68,7 @@ class Favorite(models.Model):
         verbose_name = _('Favorite')
         verbose_name_plural = _('Favorites')
         unique_together = ('user', 'recipe')
+        unique_together = ('user', 'recipe')
         
     def __str__(self):
         return f"{self.user} - {self.recipe}"

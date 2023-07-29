@@ -23,6 +23,13 @@ Detail
     {{like_form.as_p}}
     <input type="submit" value="like" />
 </form>
+<h3> Favorite </h3>
+<form method="post" action="{% url 'recipe:favorite' recipe.pk %}">
+    {% csrf_token %}    
+    {{like_form.as_p}}
+    <input type="submit" value="favorite" />
+</form>
+
 
 <h3> comments </h3>
 {% for comm in comments %}

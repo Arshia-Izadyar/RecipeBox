@@ -28,3 +28,7 @@ class LikeAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class LikeAdmin(admin.ModelAdmin):
     list_display = ("recipe", "user", "content")
+    
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ("recipe", "user")

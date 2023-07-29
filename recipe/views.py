@@ -6,9 +6,10 @@ from django.views.generic import DetailView, FormView, UpdateView, DeleteView
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Recipe, Comment
-from .forms import RecipeForm, RecipeAddCommentForm, RecipeAddLikeForm
+from .forms import RecipeForm, RecipeAddCommentForm, RecipeAddLikeForm, RecipeFavoritesForm
 
 class RecipeListView(View):
     template_name = "recipes/recipe_list.html"
@@ -142,4 +143,21 @@ class RecipeAddLike(View):
             obj.recipe = Recipe.objects.get(pk=pk)
             obj.save()
             return HttpResponseRedirect(reverse_lazy("recipe:detail", kwargs={"pk":pk}))
+        return HttpResponseRedirect('/')
+    
+class RecipeAddToFavorite(LoginRequiredMixin, DetailView):
+    model = Recipe
+    
+    def get_queryset(self):
+        return Recipe.objects.filter(pk=self.kwargs.get('pk'))
+    
+    def post(self, request, *args, **kwargs):
+        form = RecipeFavoritesForm(request.POST)
+        obj = self.get_object()
+        if form.is_valid():
+            favorite = form.save(commit=False)
+            favorite.user = request.user
+            favorite.recipe = obj
+            favorite.save()
+            return HttpResponseRedirect(reverse_lazy("recipe:detail", kwargs={"pk":self.kwargs.get('pk')}))
         return HttpResponseRedirect('/')

@@ -42,3 +42,5 @@ class User(AbstractUser):
         return self.username
 
 
+    def is_following(self, user):
+        return self.followers.filter(pk=user.pk).exists()

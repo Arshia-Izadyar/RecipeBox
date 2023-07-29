@@ -7,6 +7,7 @@ __pycache__/
 *.so
 # local files
 task.txt
+redis
 media
 # Distribution / packaging
 .Python

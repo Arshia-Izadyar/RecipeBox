@@ -4,6 +4,11 @@
 {% block content %}
 
 <h1> Recipe List</h1>
+<form >
+    {% csrf_token %}
+    {{filter.form.as_p}}
+    <input type="submit" value="Search" />
+</form> 
 <br>
 <ul>
     {% for recipe in recipes %}

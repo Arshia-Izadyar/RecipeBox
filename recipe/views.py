@@ -1,22 +1,42 @@
 from django.urls import reverse_lazy
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import DetailView, FormView, UpdateView, DeleteView
+from django.views.generic import DetailView, UpdateView, DeleteView
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django_filters import FilterSet
+from django_filters.views import FilterView
 
-from .models import Recipe, Comment
+from .models import Recipe
 from .forms import RecipeForm, RecipeAddCommentForm, RecipeAddLikeForm, RecipeFavoritesForm
 
+class HomeFilter(FilterSet):
+    class Meta:
+        model = Recipe
+        fields = {"title": ["contains"], "category": ["exact"]}
+        
+"""
 class RecipeListView(View):
     template_name = "recipes/recipe_list.html"
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # commenting this because im going to use filter view
         qs = Recipe.objects.annotate(like_count=Count("likes")).prefetch_related("likes").all()
         context = {"recipes": qs}
         return render(request, self.template_name, context)
+"""  
+
+class RecipeListView(LoginRequiredMixin, FilterView):
+    filterset_class = HomeFilter
+    paginate_by = 10
+    template_name = "recipes/recipe_list.html"
+    context_object_name = "recipes"
+    model = Recipe
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.annotate(like_count=Count("likes")).prefetch_related("likes").all()
     
     
 class RecipeDetailView(DetailView):
@@ -161,3 +181,14 @@ class RecipeAddToFavorite(LoginRequiredMixin, DetailView):
             favorite.save()
             return HttpResponseRedirect(reverse_lazy("recipe:detail", kwargs={"pk":self.kwargs.get('pk')}))
         return HttpResponseRedirect('/')
+    
+class RecipeRemoveFavorite(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        try:
+            obj = get_object_or_404(Recipe, pk=pk)  
+            obj.delete()
+            
+        except Recipe.DoesNotExist:
+            return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse_lazy('recipe:home'))

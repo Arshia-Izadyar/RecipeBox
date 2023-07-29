@@ -37,7 +37,6 @@ class Comment(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="comments", verbose_name=_("Recipe"))
     content = models.TextField(verbose_name=_("Content"))
     created_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Created date"))
-    text = models.TextField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.user} - {self.created_date}"

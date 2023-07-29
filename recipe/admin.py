@@ -16,4 +16,8 @@ class RecipeAdmin(admin.ModelAdmin):
     
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ("recipe", "user")
+    list_display = ("recipe", "user")    
+    
+@admin.register(Comment)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ("recipe", "user", "content")

@@ -18,13 +18,13 @@ Detail
 <h3> instructions </h3>
 <p>{{recipe.instructions}} </p>
 <h3> Like </h3>
-<form method="post" action="{% url 'recipe:like' recipe.pk %}">
+<form method="post" action="{% url 'review:like' recipe.pk %}">
     {% csrf_token %}    
     {{like_form.as_p}}
     <input type="submit" value="like" />
 </form>
 <h3> Favorite </h3>
-<form method="post" action="{% url 'recipe:favorite' recipe.pk %}">
+<form method="post" action="{% url 'review:favorite' recipe.pk %}">
     {% csrf_token %}    
     {{like_form.as_p}}
     <input type="submit" value="favorite" />
@@ -37,7 +37,7 @@ Detail
 {% endfor %}
 <h4> Add Comment </h4>
 
-<form method="post" action="{% url 'recipe:comment' recipe.pk %}">
+<form method="post" action="{% url 'review:comment' recipe.pk %}">
     {% csrf_token %}    
     {{comment_form.as_p}}
     <input type="submit" value="add comment" />

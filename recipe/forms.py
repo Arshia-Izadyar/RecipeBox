@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Recipe, Comment, Like, Favorite
+from .models import Recipe
 
 
 class RecipeForm(forms.ModelForm):
@@ -9,17 +9,3 @@ class RecipeForm(forms.ModelForm):
         fields = ("title", "description", "instructions", "time_to_cook", "image", "category")
 
 
-class RecipeAddCommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ("content",)
-        
-class RecipeAddLikeForm(forms.ModelForm):
-    class Meta:
-        model = Like
-        fields = []
-        
-class RecipeFavoritesForm(forms.ModelForm):
-    class Meta:
-        model = Favorite
-        fields = []

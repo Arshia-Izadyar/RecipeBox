@@ -13,3 +13,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ("title", "user")
     order_by = ("-created_time")
     
+    
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ("recipe", "user")

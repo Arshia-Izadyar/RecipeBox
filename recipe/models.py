@@ -19,12 +19,12 @@ class Category(models.Model):
 
 class Recipe(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, verbose_name=_("Created time"))
-    modified_time = models.DateTimeField(verbose_name=_("Modified time"))
+    modified_time = models.DateTimeField(verbose_name=_("Modified time"), auto_now=True)
     title = models.CharField(max_length=150, verbose_name=_("Title"))
     description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
     instructions = models.TextField(verbose_name=_("Instructions"))
     time_to_cook = models.DurationField(verbose_name=_("time to cook"))
-    image = models.ImageField(upload_to="images/", verbose_name=_("Image"))
+    image = models.ImageField(upload_to="images/", verbose_name=_("Image"), null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipe", verbose_name=_("User"))
     # like = models.PositiveBigIntegerField(default=0, )
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="categories", verbose_name=_("Category"))

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from django.utils.translation import gettext_lazy as _
 
@@ -41,6 +42,15 @@ class Comment(models.Model):
     def __str__(self):
         return f"{self.user} - {self.created_date}"
     
+    # @classmethod
+    # def check_comment_count(cls, user):
+    #     # Check if the user has already made three comments for this recipe
+    #     existing_comments_count = Comment.objects.filter(user__id=user, recipe=cls.recipe).count()
+    #     if existing_comments_count > 3:
+    #        return False
+    #     else:
+    #         return True
+
     
 
 class Like(models.Model):

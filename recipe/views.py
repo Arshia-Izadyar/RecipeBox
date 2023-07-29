@@ -1,17 +1,14 @@
-
-from typing import Any
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.urls import reverse_lazy
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import DetailView, FormView, UpdateView, DeleteView
 from django.db.models import Count
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-from .models import Recipe
-from .permissions import IsAuthorOrReadOnlyPermission
-from .forms import RecipeForm
+from .models import Recipe, Comment
+from .forms import RecipeForm, RecipeAddCommentForm, RecipeAddLikeForm
 
 class RecipeListView(View):
     template_name = "recipes/recipe_list.html"
@@ -24,11 +21,18 @@ class RecipeListView(View):
 class RecipeDetailView(DetailView):
     template_name = "recipes/recipe_detail.html"
     context_object_name = "recipe"
-    queryset = Recipe.objects.annotate(like_count=Count("likes")).prefetch_related("likes", "comments")
+
+    
+    def get_queryset(self):
+        pk = self.kwargs["pk"]
+        return Recipe.objects.annotate(like_count=Count("likes")).prefetch_related("likes", "comments").filter(pk=pk)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["comments"] = self.queryset[0].comments.all()
+        recipe = context['recipe']
+        context["comments"] = recipe.comments.all()
+        context["comment_form"] = RecipeAddCommentForm()
+        context["like_form"] = RecipeAddLikeForm()
         return context
             
 """           
@@ -101,3 +105,41 @@ class RecipeDeleteView(DeleteView):
         if request.method == 'POST':
             self.obj.delete()
             return HttpResponseRedirect(self.success_url)
+
+
+class RecipeAddComment(View):
+    
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        pk =self.kwargs['pk']
+        form = RecipeAddCommentForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.recipe = Recipe.objects.get(pk=pk)
+            obj.save()
+            return HttpResponseRedirect(reverse_lazy("recipe:detail", kwargs={"pk":pk}))
+        return HttpResponseRedirect('/')
+
+
+class RecipeAddLike(View):
+    # or i can add like to existing model 
+    # obj.like += 1
+    # obj.save()    
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.pop('pk')
+        form = RecipeAddLikeForm(request.POST) 
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.recipe = Recipe.objects.get(pk=pk)
+            obj.save()
+            return HttpResponseRedirect(reverse_lazy("recipe:detail", kwargs={"pk":pk}))
+        return HttpResponseRedirect('/')

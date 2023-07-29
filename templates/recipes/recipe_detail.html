@@ -17,13 +17,30 @@ Detail
 <br>
 <h3> instructions </h3>
 <p>{{recipe.instructions}} </p>
+<h3> Like </h3>
+<form method="post" action="{% url 'recipe:like' recipe.pk %}">
+    {% csrf_token %}    
+    {{like_form.as_p}}
+    <input type="submit" value="like" />
+</form>
 
 <h3> comments </h3>
 {% for comm in comments %}
 <li><b>{{comm.user}}</b>:{{comm.content}}</li>
 {% endfor %}
+<h4> Add Comment </h4>
+
+<form method="post" action="{% url 'recipe:comment' recipe.pk %}">
+    {% csrf_token %}    
+    {{comment_form.as_p}}
+    <input type="submit" value="add comment" />
+</form>
+<br>
+
+
 
 {% if request.user == recipe.user %}
+<h3> recipe management </h3>
     <form method="get" action="{% url 'recipe:delete' recipe.pk %}">
         {% csrf_token %}
         <input type="submit" value="delete" />

@@ -7,6 +7,7 @@ from django.db.models import Count, Q
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.cache import cache_page
 from django_filters import FilterSet
 from django_filters.views import FilterView
 
@@ -21,7 +22,7 @@ class HomeFilter(FilterSet):
     class Meta:
         model = Recipe
         fields = {"title": ["contains"], "category": ["exact"]}
-        
+                
 """
 class RecipeListView(View):
     template_name = "recipes/recipe_list.html"
@@ -38,7 +39,11 @@ class RecipeListView(FilterView):
     context_object_name = "recipes"
     model = Recipe
     
-    def get_queryset(self):
+    @method_decorator(cache_page(60 * 5))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_queryset(self):        
         qs = super().get_queryset()
         return qs.annotate(like_count=Count("likes")).prefetch_related("likes").all()
     
@@ -144,7 +149,7 @@ class RecipeCategoryList(ListView):
         return Recipe.objects.filter(category__name=category)
     
 
-class HomeView(View):
+class HomeView(View):    
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             user = request.user

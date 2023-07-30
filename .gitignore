@@ -8,6 +8,7 @@ __pycache__/
 # local files
 task.txt
 redis
+local_conf.py
 media
 # Distribution / packaging
 .Python

@@ -63,6 +63,7 @@ if a user is owner of a profile extra info will be showen like bookarked / liked
 
 ## How to use
 **build docker compose yaml file**
+#### Or
 1) create a psql DB and a local_cnf.py file
 2) add your data base info to local_cnf.py
 3) then run migrations
